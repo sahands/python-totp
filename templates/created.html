@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Heroku Python TOTP Demo{% endblock %}
+{% block pagetitle %}User Created!{% endblock %}
 {% block content %}
-<div class="jumbotron">
-  <h1>User Created!</h1>
   <p>Here is your QR code:</p>
   <p>
       <img src="/qr/{{user.email|e}}" />
@@ -13,7 +12,6 @@
   <p>
       <a href="/login" class="btn btn-success btn-lg">Login</a>
   </p>
-</div>
 {% endblock %}
 
 

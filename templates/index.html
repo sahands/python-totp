@@ -1,12 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Heroku Python TOTP Demo{% endblock %}
+{% block pagetitle %}Python TOTP Demo{% endblock %}
 {% block content %}
-<div class="jumbotron">
-  <h1>Python TOTP Demo</h1>
-  <p>Create a new user, or attempt to authenticate an existing one:</p>
   <p>
-      <a href="/new" class="btn btn-primary btn-lg">Sign Up</a>
-      <a href="/login" class="btn btn-success btn-lg">Login</a>
+      This simple app demonstrates the Time-Based One-Time Password (TOTP)
+      algorithm by allowing very simple creation and authentication of users.
+      For the purposes of this app, authentication is done only using a
+      username and a one-time password generated using Google Authenticator or
+      another TOTP-enabled client. Note that I skipped passwords entirely, but
+      in real world applications one-time passwords are almost always the
+      second factor, the first being a user chosen password.  
   </p>
-</div>
+  <p>
+    </p>
+    <p>
+  </p>
+  <p>
+  <div class="row">
+      <div class="col-md-12">
+          You get a secret key when you create a new user. For simplicity,
+          there is no cofirmation step.
+      </div>
+      <div class="col-md-4 col-md-offset-8">
+          <a href="/new" class="btn btn-primary btn-lg" style="width:100%;">Sign Up</a>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-md-12">
+        If you have already created a user and would like to authenticate it,
+        click here.
+      </div>
+      <div class="col-md-4 col-md-offset-8">
+          <a href="/login" class="btn btn-success btn-lg right-alight" style="width:100%;">Login</a>
+      </div>
+  </div>
 {% endblock %}

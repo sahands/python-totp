@@ -28,7 +28,7 @@ class User(object):
             self.key = pyotp.random_base32()
 
     def save(self):
-        if len(self.email) < 6:
+        if len(self.email) < 1:
             return False
 
         users = pickle.load(open(USER_FILE_NAME, 'rb'))
@@ -81,7 +81,7 @@ def new():
         if u.save():
             return render_template('/created.html', user=u)
         else:
-            flash('Invalid email or user already exists.', 'error')
+            flash('Invalid email or user already exists.', 'danger')
             return render_template('new.html')
     else:
         return render_template('new.html')
@@ -92,14 +92,15 @@ def login():
     if request.method == 'POST':
         u = User.get_user(request.form['email'])
         if u is None:
-            flash('Invalid email address.', 'error')
-            return render_template('login.html', result='fail')
+            flash('Invalid email address.', 'danger')
+            return render_template('login.html', result='')
         else:
             otp = request.form['otp']
             if u.authenticate(otp):
+                flash('Authentication successful!', 'success')
                 return render_template('login.html', result='success')
             else:
-                flash('Invalid one-time password!', 'error')
+                flash('Invalid one-time password!', 'danger')
                 return render_template('login.html', result='fail')
     else:
         return render_template('login.html')

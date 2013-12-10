@@ -1,28 +1,31 @@
 {% extends "base.html" %}
 {% block title %}Heroku Python TOTP Demo{% endblock %}
+{% block pagetitle %}Log in{% endblock %}
 {% block content %}
-<div class="jumbotron">
-  <h1>Log in</h1>
-  <form class="form-inline" role="form" method="post">
+  <form class="form" role="form" method="post">
   <div class="form-group">
-    <label class="sr-only" for="input-email">Email address</label>
-    <input type="email" name="email" class="form-control" id="input-email" placeholder="Enter email" value="{{request.form.email}}">
+    <label for="input-email">Username</label>
+    <input type="text" name="email" class="form-control" id="input-email" placeholder="Enter username" value="{{request.form.email}}">
   </div>
   <div class="form-group">
-    <label class="sr-only" for="input-otp">Temporary code</label>
+    <label for="input-otp">Temporary code</label>
     <input type="text" name="otp" class="form-control" id="input-otp" placeholder="Enter Temporary Code">
   </div>
-  <button type="submit" class="btn btn-primary">Log in</button>
+  <a href="/" class="btn btn-default">Back</a>
+  <button type="submit" class="btn btn-primary" style="width: 300px;">Log in</button>
 </form>
-{% if result == 'success' %}
-<p>
-    Success!
-</p>
-{% elif result == 'fail' %}
-<p>
-    Fail!
-</p>
-{% endif %}
-</div>
+{# {% if result == 'success' %} #}
+{# <div class="alert alert-success"> #}
+{#     <h2> #}
+{#         Successfully authenticated! #}
+{#     </h2> #}
+{# </p> #}
+{# {% elif result == 'fail' %} #}
+{# <div class="alert alert-danger"> #}
+{#     <h2> #}
+{#         Authentication failed. #}
+{#     </h2> #}
+{# </p> #}
+{# {% endif %} #}
 {% endblock %}
 

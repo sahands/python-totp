@@ -17,18 +17,22 @@
   
     <div class="container page">
         <div class="content">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <ul class="flashes">
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        
-          {% block content %}
-          {% endblock %}
+        <div class="jumbotron">
+            <h1>{% block pagetitle %}{% endblock %}</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {# <ul class="flashes"> #}
+                        {% for category, message in messages %}
+                            {# <li class="{{ category }}">{{ message }}</li> #}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {# </ul> #}
+                {% endif %}
+            {% endwith %}
+            
+              {% block content %}
+              {% endblock %}
+            </div>
         </div>
         <hr>
         {% block footer %}
