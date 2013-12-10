@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Heroku Python TOTP Demo{% endblock %}
+{% block content %}
+<div class="jumbotron">
+  <h1>Register a New User</h1>
+  <form class="form-inline" role="form" method="post">
+  <div class="form-group">
+    <label class="sr-only" for="exampleInputEmail2">Email address</label>
+    <input type="email" name="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email">
+  </div>
+  <button type="submit" class="btn btn-primary">Sign up</button>
+</form>
+</div>
+{% endblock %}

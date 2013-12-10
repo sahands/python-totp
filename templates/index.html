@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Heroku Python TOTP Demo{% endblock %}
+{% block content %}
+<div class="jumbotron">
+  <h1>Python TOTP Demo</h1>
+  <p>Create a new user, or attempt to authenticate an existing one:</p>
+  <p>
+      <a href="/new" class="btn btn-primary btn-lg">Sign Up</a>
+      <a href="/login" class="btn btn-success btn-lg">Login</a>
+  </p>
+</div>
+{% endblock %}

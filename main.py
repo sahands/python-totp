@@ -2,7 +2,8 @@ import os
 import pyotp
 import qrcode
 import pickle
-from flask import Flask
+from StringIO import StringIO
+from flask import Flask, render_template, redirect, request, flash, send_file
 
 
 # I use a simple flat file to save the user information This is a terrible idea
@@ -12,35 +13,95 @@ USER_FILE_NAME = 'users.data'
 
 app = Flask(__name__)
 
+app.config.update(SECRET_KEY = 'fB04LfYc0Nfjneu47wYwPGyWYcEVeWbaxdA')
+app.config.update(DEBUG = True)
+
 
 class User(object):
-    def __init__(self, name, key=None):
-        self.name = name
+    def __init__(self, email, key=None):
+        self.email = email
         self.key = key
         if key is None:
-            key = pyotp.random_base32()
+            self.key = pyotp.random_base32()
 
     def save(self):
-        users = pickle.load(USER_FILE_NAME)
-        if self.name in users:
+        if len(self.email) < 6:
+            return False
+
+        users = pickle.load(open(USER_FILE_NAME, 'rb'))
+        if self.email in users:
             return False
         else:
-            users[self.name] = key
-            pickle.dump(USER_FILE_NAME)
+            users[self.email] = self.key
+            pickle.dump(users, open(USER_FILE_NAME, 'wb'))
             return True
 
+
+    def authenticate(self, otp):
+        p = 0
+        try:
+            p = int(otp)
+        except:
+            pass
+        t = pyotp.TOTP(self.key)
+        return t.verify(p)
+
+
     @classmethod
-    def get_user(cls, name):
-        users = pickle.load(USER_FILE_NAME)
-        if name in users:
-            return users[name]
+    def get_user(cls, email):
+        users = pickle.load(open(USER_FILE_NAME, 'rb'))
+        if email in users:
+            return User(email, users[email])
         else:
             return None
 
-@app.route('/new')
+
+@app.route('/qr/<email>')
+def qr(email):
+    u = User.get_user(email)
+    if u is None:
+        return ''
+    t = pyotp.TOTP(u.key)
+    # q = qrcode.make(t.provisioning_uri("python-totp.herokuapp.com:" + email))
+    q = qrcode.make(t.provisioning_uri(email))
+    img = StringIO()
+    q.save(img)
+    img.seek(0)
+    return send_file(img, mimetype="image/png")
+
+
+
+@app.route('/new', methods=['GET', 'POST'])
 def new():
-    return '!'
+    if request.method == 'POST':
+        u = User(request.form['email'])
+        if u.save():
+            return render_template('/created.html', user=u)
+        else:
+            flash('Invalid email or user already exists.', 'error')
+            return render_template('new.html')
+    else:
+        return render_template('new.html')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        u = User.get_user(request.form['email'])
+        if u is None:
+            flash('Invalid email address.', 'error')
+            return render_template('login.html', result='fail')
+        else:
+            otp = request.form['otp']
+            if u.authenticate(otp):
+                return render_template('login.html', result='success')
+            else:
+                flash('Invalid one-time password!', 'error')
+                return render_template('login.html', result='fail')
+    else:
+        return render_template('login.html')
+
 
 @app.route('/')
 def main():
-    return 'Hello!'
+    return render_template('index.html')
