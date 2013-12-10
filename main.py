@@ -93,15 +93,15 @@ def login():
         u = User.get_user(request.form['email'])
         if u is None:
             flash('Invalid email address.', 'danger')
-            return render_template('login.html', result='')
+            return render_template('login.html')
         else:
             otp = request.form['otp']
             if u.authenticate(otp):
                 flash('Authentication successful!', 'success')
-                return render_template('login.html', result='success')
+                return render_template('login.html')
             else:
                 flash('Invalid one-time password!', 'danger')
-                return render_template('login.html', result='fail')
+                return render_template('login.html')
     else:
         return render_template('login.html')
 
