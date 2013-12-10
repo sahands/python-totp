@@ -2,6 +2,7 @@ import os
 import pyotp
 import qrcode
 import pickle
+import logging
 from StringIO import StringIO
 from flask import Flask, render_template, redirect, request, flash, send_file
 
@@ -15,6 +16,8 @@ app = Flask(__name__)
 
 app.config.update(SECRET_KEY = 'fB04LfYc0Nfjneu47wYwPGyWYcEVeWbaxdA')
 app.config.update(DEBUG = True)
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 class User(object):
