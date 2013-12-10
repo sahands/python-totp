@@ -65,13 +65,11 @@ def qr(email):
     if u is None:
         return ''
     t = pyotp.TOTP(u.key)
-    # q = qrcode.make(t.provisioning_uri("python-totp.herokuapp.com:" + email))
     q = qrcode.make(t.provisioning_uri(email))
     img = StringIO()
     q.save(img)
     img.seek(0)
     return send_file(img, mimetype="image/png")
-
 
 
 @app.route('/new', methods=['GET', 'POST'])
