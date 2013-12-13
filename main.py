@@ -72,6 +72,23 @@ def qr(email):
     return send_file(img, mimetype="image/png")
 
 
+@app.route('/code/<email>')
+def code(email):
+    u = User.get_user(email)
+    if u is None:
+        return ''
+    t = pyotp.TOTP(u.key)
+    return str(t.now())
+
+
+@app.route('/user/<email>')
+def user(email):
+    u = User.get_user(email)
+    if u is None:
+        return redirect('/')
+    return render_template('/view.html', user=u)
+
+
 @app.route('/new', methods=['GET', 'POST'])
 def new():
     if request.method == 'POST':
@@ -96,7 +113,7 @@ def login():
             otp = request.form['otp']
             if u.authenticate(otp):
                 flash('Authentication successful!', 'success')
-                return render_template('login.html')
+                return render_template('/view.html', user=u)
             else:
                 flash('Invalid one-time password!', 'danger')
                 return render_template('login.html')

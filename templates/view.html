@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Heroku Python TOTP Demo{% endblock %}
+{% block pagetitle %}Logged In{% endblock %}
+{% block content %}
+  <p>Logged In:</p>
+        <div class="alert alert-info" id="div-code" style="width: 110px; margin-right:5px; float: left;"></div>
+        <div class="alert alert-danger" id="div-counter" style="width: 70px; float: left;"></div>
+        <div style="clear: both;"></div>
+  <p>
+  </p>
+  <p>
+      <a href="/" class="btn btn-info btn-lg">Back</a>
+  </p>
+
+  <script>
+window.onload = function() {
+    var c = 0;
+    var previous = '';
+    var update = function() {
+            $.ajax({
+url: "/code/{{user.email}}",
+              cache: false
+            })
+              .done(function( html ) {
+                c++;
+                if(html != previous) {
+                    previous = html;
+                    c = 0;
+                }
+                $( "#div-code" ).html( html );
+                $( "#div-counter" ).html( "" + c + "s" );
+              });
+      };
+    update();
+    var interval = window.setInterval(  update, 
+    1000);
+};
+
+  </script>
+{% endblock %}
+
