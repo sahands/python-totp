@@ -1,66 +1,27 @@
-import os
-import pyotp
 import qrcode
-import pickle
 import logging
+import pyotp
 from StringIO import StringIO
 from flask import Flask, render_template, redirect, request, flash, send_file
 
+from user import User
 
-# I use a simple flat file to save the user information This is a terrible idea
-# for any real work application But this is merely a demo of how TOTP can be
-# used in Python, so I am keeping it very minimalistic
-USER_FILE_NAME = 'users.data'
+
+__author__ = 'Sahand Saba'
+
 
 app = Flask(__name__)
-
-app.config.update(SECRET_KEY = 'fB04LfYc0Nfjneu47wYwPGyWYcEVeWbaxdA')
-app.config.update(DEBUG = True)
-
+app.config.update(SECRET_KEY='fB04LfYc0Nfjneu47wYwPGyWYcEVeWbaxdA')
+app.config.update(DEBUG=True)
 logging.basicConfig(level=logging.DEBUG)
-
-
-class User(object):
-    def __init__(self, email, key=None):
-        self.email = email
-        self.key = key
-        if key is None:
-            self.key = pyotp.random_base32()
-
-    def save(self):
-        if len(self.email) < 1:
-            return False
-
-        users = pickle.load(open(USER_FILE_NAME, 'rb'))
-        if self.email in users:
-            return False
-        else:
-            users[self.email] = self.key
-            pickle.dump(users, open(USER_FILE_NAME, 'wb'))
-            return True
-
-
-    def authenticate(self, otp):
-        p = 0
-        try:
-            p = int(otp)
-        except:
-            pass
-        t = pyotp.TOTP(self.key)
-        return t.verify(p)
-
-
-    @classmethod
-    def get_user(cls, email):
-        users = pickle.load(open(USER_FILE_NAME, 'rb'))
-        if email in users:
-            return User(email, users[email])
-        else:
-            return None
 
 
 @app.route('/qr/<email>')
 def qr(email):
+    """
+    Return a QR code for the secret key associated with the given email
+    address. The QR code is returned as file with MIME type image/png.
+    """
     u = User.get_user(email)
     if u is None:
         return ''
@@ -74,6 +35,10 @@ def qr(email):
 
 @app.route('/code/<email>')
 def code(email):
+    """
+    Returns the one-time password associated with the given user for the
+    current time window. Returns empty string if user is not found.
+    """
     u = User.get_user(email)
     if u is None:
         return ''
@@ -83,6 +48,7 @@ def code(email):
 
 @app.route('/user/<email>')
 def user(email):
+    """User view page."""
     u = User.get_user(email)
     if u is None:
         return redirect('/')
@@ -91,6 +57,7 @@ def user(email):
 
 @app.route('/new', methods=['GET', 'POST'])
 def new():
+    """New user form."""
     if request.method == 'POST':
         u = User(request.form['email'])
         if u.save():
@@ -104,6 +71,7 @@ def new():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """Login form."""
     if request.method == 'POST':
         u = User.get_user(request.form['email'])
         if u is None:
