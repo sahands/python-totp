@@ -1,6 +1,7 @@
 import qrcode
 import logging
 import pyotp
+import os
 from StringIO import StringIO
 from flask import Flask, render_template, redirect, request, flash, send_file
 
@@ -11,9 +12,8 @@ __author__ = 'Sahand Saba'
 
 
 app = Flask(__name__)
-app.config.update(SECRET_KEY='fB04LfYc0Nfjneu47wYwPGyWYcEVeWbaxdA')
-app.config.update(DEBUG=True)
-logging.basicConfig(level=logging.DEBUG)
+app.config.update(SECRET_KEY=os.environ['FLASK_SESSION_SECRET_KEY'])
+# app.config.update(DEBUG=True)
 
 
 @app.route('/qr/<email>')
