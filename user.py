@@ -36,7 +36,7 @@ class User(object):
         try:
             p = int(otp)
         except:
-            pass
+            return False
         t = pyotp.TOTP(self.key)
         return t.verify(p)
 
